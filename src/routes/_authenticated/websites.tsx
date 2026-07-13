@@ -52,6 +52,10 @@ function WebsitesPage() {
       name: String(fd.get("name")), url: String(fd.get("url") || "") || null,
       client_id: clientId, plan_id: planId || null, active,
       renewal_date: String(fd.get("renewal_date") || "") || null,
+      domain_expires_at: String(fd.get("domain_expires_at") || "") || null,
+      hosting_expires_at: String(fd.get("hosting_expires_at") || "") || null,
+      ssl_expires_at: String(fd.get("ssl_expires_at") || "") || null,
+      maintenance_renewal_date: String(fd.get("maintenance_renewal_date") || "") || null,
       notes: String(fd.get("notes") || "") || null,
     };
     const { error } = editing

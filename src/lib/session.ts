@@ -22,6 +22,7 @@ export function useSession(): SessionInfo {
         if (mounted) setState({ user: null, role: null, clientId: null, loading: false });
         return;
       }
+
       const [{ data: roles }, { data: profile }] = await Promise.all([
         supabase.from("user_roles").select("role").eq("user_id", user.id),
         supabase.from("profiles").select("client_id").eq("id", user.id).maybeSingle(),
@@ -31,8 +32,11 @@ export function useSession(): SessionInfo {
     }
 
     supabase.auth.getUser().then(({ data }) => load(data.user));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => load(session?.user ?? null));
-    return () => { mounted = false; sub.subscription.unsubscribe(); };
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => load(session?.user ?? null));
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
   }, []);
 
   return state;

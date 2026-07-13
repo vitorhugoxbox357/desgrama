@@ -1,6 +1,7 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
-  LayoutDashboard, Users, Globe, Receipt, CheckSquare, FileText, ClipboardList, Building2, Settings, LogOut, ShieldCheck,
+  LayoutDashboard, Users, Globe, Receipt, CheckSquare, FileText, ClipboardList, Building2, Settings, LogOut,
+  Activity, CalendarClock, BarChart3, History,
 } from "lucide-react";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -14,10 +15,14 @@ const adminItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Clientes", url: "/clients", icon: Users },
   { title: "Websites", url: "/websites", icon: Globe },
+  { title: "Monitorizacao", url: "/monitoring", icon: Activity },
+  { title: "Calendario", url: "/calendar", icon: CalendarClock },
   { title: "Custos", url: "/costs", icon: Receipt },
   { title: "Aprovações", url: "/approvals", icon: CheckSquare },
   { title: "Faturas", url: "/invoices", icon: FileText },
   { title: "Tarefas", url: "/tasks", icon: ClipboardList },
+  { title: "Relatorios", url: "/reports", icon: BarChart3 },
+  { title: "Atividade", url: "/activity", icon: History },
 ];
 
 const clientItems = [
@@ -43,9 +48,7 @@ export function AppSidebar({ role, email }: { role: Role; email?: string | null 
     <Sidebar collapsible="icon">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex items-center gap-2 px-2 py-2">
-          <div className="h-8 w-8 rounded-md bg-sidebar-primary flex items-center justify-center">
-            <ShieldCheck className="h-4 w-4 text-sidebar-primary-foreground" />
-          </div>
+          <img src="/clientcare-logo.svg" alt="ClientCare" className="h-8 w-8 rounded-md" />
           {!collapsed && (
             <div className="flex flex-col leading-tight">
               <span className="text-sm font-semibold text-sidebar-foreground">ClientCare</span>
