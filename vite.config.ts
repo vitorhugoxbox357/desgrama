@@ -15,6 +15,11 @@ export default defineConfig({
     tsConfigPaths(),
     nitro({
       preset: "vercel",
+      vercel: {
+        functions: {
+          runtime: "nodejs22.x",
+        },
+      },
     }),
   ],
 });
