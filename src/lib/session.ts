@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { isSupabaseConfigured, supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 
 export type Role = "admin" | "client";
@@ -16,6 +16,13 @@ export function useSession(): SessionInfo {
 
   useEffect(() => {
     let mounted = true;
+
+    if (!isSupabaseConfigured()) {
+      setState({ user: null, role: null, clientId: null, loading: false });
+      return () => {
+        mounted = false;
+      };
+    }
 
     async function load(user: User | null) {
       if (!user) {

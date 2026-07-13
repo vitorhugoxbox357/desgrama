@@ -27,29 +27,48 @@ function createSupabaseFetch(supabaseKey: string): typeof fetch {
 }
 
 
-function createSupabaseClient() {
+function getRuntimeEnv() {
+  return typeof process !== 'undefined' ? process.env : {};
+}
+
+export function getSupabaseConfig() {
   // Use import.meta.env for client-side (Vite build-time replacement)
   // Fall back to process.env for SSR (server-side rendering)
-  const runtimeEnv = typeof process !== 'undefined' ? process.env : {};
-  const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || runtimeEnv.VITE_SUPABASE_URL || runtimeEnv.SUPABASE_URL;
-  const SUPABASE_PUBLISHABLE_KEY =
+  const runtimeEnv = getRuntimeEnv();
+  const url = import.meta.env.VITE_SUPABASE_URL || runtimeEnv.VITE_SUPABASE_URL || runtimeEnv.SUPABASE_URL;
+  const publishableKey =
     import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ||
     runtimeEnv.VITE_SUPABASE_PUBLISHABLE_KEY ||
     runtimeEnv.SUPABASE_PUBLISHABLE_KEY;
 
-  if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
-    const missing = [
-      ...(!SUPABASE_URL ? ['VITE_SUPABASE_URL'] : []),
-      ...(!SUPABASE_PUBLISHABLE_KEY ? ['VITE_SUPABASE_PUBLISHABLE_KEY'] : []),
-    ];
+  return { url, publishableKey };
+}
+
+export function getMissingSupabaseConfig() {
+  const { url, publishableKey } = getSupabaseConfig();
+  return [
+    ...(!url ? ['VITE_SUPABASE_URL'] : []),
+    ...(!publishableKey ? ['VITE_SUPABASE_PUBLISHABLE_KEY'] : []),
+  ];
+}
+
+export function isSupabaseConfigured() {
+  return getMissingSupabaseConfig().length === 0;
+}
+
+function createSupabaseClient() {
+  const { url, publishableKey } = getSupabaseConfig();
+
+  if (!url || !publishableKey) {
+    const missing = getMissingSupabaseConfig();
     const message = `Missing Supabase environment variable(s): ${missing.join(', ')}. Configure them in your deployment environment.`;
     console.error(`[Supabase] ${message}`);
     throw new Error(message);
   }
 
-  return createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  return createClient<Database>(url, publishableKey, {
     global: {
-      fetch: createSupabaseFetch(SUPABASE_PUBLISHABLE_KEY),
+      fetch: createSupabaseFetch(publishableKey),
     },
     auth: {
       storage: typeof window !== 'undefined' ? localStorage : undefined,
