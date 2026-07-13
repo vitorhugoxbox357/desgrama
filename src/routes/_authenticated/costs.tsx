@@ -52,8 +52,8 @@ function CostsPage() {
       description: String(fd.get("description")),
       amount: Number(fd.get("amount")),
       client_id: clientId, website_id: websiteId || null,
-      cost_type: type,
-      status: type === "internal" ? "internal" : "pending_approval",
+      cost_type: type as "internal" | "billable",
+      status: (type === "internal" ? "internal" : "pending_approval") as "internal" | "pending_approval",
       incurred_at: String(fd.get("incurred_at") || new Date().toISOString().slice(0, 10)),
     };
     const { error } = await supabase.from("maintenance_costs").insert(payload);
